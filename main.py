@@ -2,8 +2,13 @@ import discord
 import os
 import requests
 import json
+import random
+from keep_alive import keep_alive
 
 client = discord.Client()
+
+sad_words = ['sad', 'depressed', 'unhappy']
+good_words = ['Cheer up!', 'Hang in there!', 'You are a great person!']
 
 def get_quote():
   response = requests.get("https://zenquotes.io/api/random")
@@ -20,7 +25,13 @@ async def on_message(message):
   if message.author == client.user:
     return
 
-  if message.content.startswith('!inspire'):
+  msg = message.content
+
+  if msg.startswith('!inspire'):
     await message.channel.send(get_quote())
 
+  if any(word in msg for word in sad_words):
+    await message.channel.send(random.choice(good_words))
+
+keep_alive()
 client.run(os.getenv('TOKEN'))
